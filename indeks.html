@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Media Interaktif IPA – Cuaca</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--sky1:#7fd3ff;--sky2:#d9f3ff;--ink:#1b3a57;--card:#ffffffee;--wood:#f4a43a;--wood2:#c9741a;--grass:#4bb543;--pad:0px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#fffffff2}}
+html,body{height:100%;margin:0}*{box-sizing:border-box}
+body{font-family:'Fredoka','Trebuchet MS',sans-serif;color:var(--ink);overflow:hidden;background:linear-gradient(var(--sky1),var(--sky2));transition:background 1s}
+body[data-w=cerah]{--sky1:#4cc3ff;--sky2:#fff6c9}body[data-w=berawan]{--sky1:#a8d4ee;--sky2:#eef6fb}
+body[data-w=mendung]{--sky1:#6c7f93;--sky2:#b8c4cf}body[data-w=hujan]{--sky1:#475a70;--sky2:#8ea0b3}body[data-w=berangin]{--sky1:#8fe0e0;--sky2:#e6fbf3}
+#fx{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.grass{position:fixed;left:0;right:0;bottom:0;height:12vh;background:radial-gradient(120% 100% at 50% 100%,var(--grass) 60%,transparent 61%);z-index:1}
+.slide{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;padding:3vh 3vw 15vh;z-index:2;overflow:auto}
+.slide.on{display:flex;animation:in .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes in{from{opacity:0;transform:translateY(30px) scale(.95)}}
+h1,h2{margin:.2em 0;text-align:center;text-shadow:0 3px 0 #fff8}
+h1{font-size:clamp(44px,10vw,110px);color:#2e9e3a;-webkit-text-stroke:3px #fff;letter-spacing:4px;animation:bob 2.5s ease-in-out infinite}
+h2{font-size:clamp(28px,5vw,52px)}
+@keyframes bob{50%{transform:translateY(-12px)}}
+.btn{font:700 clamp(15px,2.2vw,22px) 'Fredoka',sans-serif;color:#fff;background:linear-gradient(var(--wood),var(--wood2));border:3px solid #fff;border-radius:16px;padding:12px 22px;cursor:pointer;box-shadow:0 5px 0 #8a4d0e;transition:.15s;text-shadow:0 2px 0 #0004}
+.btn:hover{transform:translateY(-3px) rotate(-1.5deg)}.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #8a4d0e}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;width:min(900px,100%);margin-top:2vh}
+.card{background:var(--card);border-radius:22px;padding:18px 22px;box-shadow:0 8px 24px #0003;line-height:1.5;font-size:clamp(15px,2vw,21px)}
+.hero{font-size:clamp(80px,18vw,200px);animation:bob 3s infinite;filter:drop-shadow(0 10px 8px #0003)}
+.center{display:flex;flex-direction:column;align-items:center;gap:14px;justify-content:center;flex:1}
+#nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:9;background:#c8102e;padding:8px 14px;border-radius:40px;border:3px solid #fff;box-shadow:0 6px 16px #0004}
+#nav button{width:46px;height:46px;border-radius:50%;border:0;background:#ffd23f;font-size:22px;cursor:pointer;transition:.15s}#nav button:hover{transform:scale(1.2) rotate(8deg)}
+.tag{display:inline-block;background:#fff;border-radius:20px;padding:4px 14px;font-weight:600;margin:3px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0;max-width:1000px}
+.tab{border:3px solid #fff;border-radius:30px;padding:8px 16px;font:600 clamp(13px,1.8vw,18px) 'Fredoka';cursor:pointer;color:#fff;transition:.2s;box-shadow:0 4px 0 #0003}
+.tab.on{transform:scale(1.15) translateY(-3px);box-shadow:0 8px 14px #0004}
+.panel{display:flex;gap:22px;align-items:center;width:min(1000px,100%);flex-wrap:wrap;justify-content:center}
+.panel .card{flex:2;min-width:260px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.panel .ico{flex:1;font-size:clamp(70px,13vw,150px);text-align:center;animation:bob 2.2s infinite}
+@keyframes pop{from{opacity:0;transform:scale(.7) rotate(-4deg)}}
+.card ul{margin:6px 0;padding-left:1.2em}.card li{margin:5px 0;animation:pop .5s backwards}
+.prog{width:min(700px,100%);height:14px;background:#fff8;border-radius:10px;overflow:hidden;margin:6px 0}.prog i{display:block;height:100%;background:#ffb703;transition:width .5s}
+.items{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:12px}
+.item{font-size:clamp(40px,7vw,70px);background:#fff;border:4px solid #fff;border-radius:20px;padding:8px 14px;cursor:pointer;box-shadow:0 5px 0 #0003;transition:.2s}
+.item small{display:block;font:600 14px 'Fredoka'}.item:hover{transform:translateY(-6px) rotate(-4deg)}
+.item.ok{background:#b7f5b0;animation:pop .5s;pointer-events:none}.item.no{animation:shake .4s;background:#ffc5c5}
+@keyframes shake{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;background:#fff;border:3px solid #9cd6f5;border-radius:14px;padding:10px 16px;font:600 clamp(14px,2vw,20px) 'Fredoka';cursor:pointer;color:var(--ink);transition:.15s}
+.opt:hover{transform:translateX(8px)}.opt.ok{background:#b7f5b0;border-color:#2e9e3a}.opt.no{background:#ffc5c5;border-color:#d33;animation:shake .4s}
+.beat{display:flex;gap:18px;font-size:clamp(50px,10vw,110px)}.beat span{animation:bounce .6s infinite alternate}
+.beat span:nth-child(2){animation-delay:.15s}.beat span:nth-child(3){animation-delay:.3s}@keyframes bounce{to{transform:translateY(-30px) rotate(12deg)}}
+.pause .beat span{animation-play-state:paused}
+.fl{position:absolute;will-change:transform}
+.pop{position:fixed;font-size:40px;z-index:20;pointer-events:none;animation:up 1s forwards}@keyframes up{to{transform:translateY(-120px) scale(1.8);opacity:0}}
+.avatar{width:120px;height:120px;border-radius:50% 50% 12px 12px;background:#ffe08a;display:grid;place-items:center;font-size:70px;margin:auto;border:4px solid #fff}
+.ft{margin:3vh 0 0;font-size:13px;opacity:.8}
+</style></head><body data-w="">
+<div id="fx"></div><div class="grass"></div>
+
+<section class="slide" id="cover"><div class="center"><div style="font-size:60px" class="hero" id="coverhero">🌤️</div><h1>CUACA</h1>
+<div class="tag">ILMU PENGETAHUAN ALAM · LEVEL 3</div><button class="btn" onclick="go('menu')" style="font-size:28px">▶ Mulai Belajar</button></div></section>
+
+<section class="slide" id="menu"><h2>MENU</h2><div class="grid" id="menugrid"></div></section>
+
+<section class="slide" id="tujuan"><h2>Tujuan Pembelajaran</h2><div class="card" style="width:min(900px,100%)"><ul id="tj" style="list-style:none;padding:0"></ul></div></section>
+
+<section class="slide" id="materi"><h2>MATERI</h2><div class="grid" id="matgrid"></div></section>
+
+<section class="slide" id="pengertian"><h2>PENGERTIAN CUACA</h2><div class="center">
+<div class="card" style="max-width:800px;text-align:center;font-size:clamp(20px,3vw,32px)">Cuaca adalah suatu gejala alam yang terjadi dan berubah dalam waktu singkat.<br><small>Perubahan cuaca dapat dirasakan dari menit ke menit atau jam ke jam.</small></div>
+<button class="btn" onclick="cycle()">🔄 Lihat cuaca berubah!</button><div class="hero" id="pico" style="font-size:clamp(70px,12vw,130px)">☀️</div></div></section>
+
+<section class="slide" id="w"><h2 id="wt"></h2><div id="wsub" class="tag"></div><div class="tabs" id="tabs"></div>
+<div class="panel"><div class="card" id="wc"></div><div class="ico" id="wi"></div></div>
+<div class="ft">Klik tiap tombol untuk menjelajah materi</div></section>
+
+
+
+<section class="slide" id="video"><h2>VIDEO</h2><div class="center"><div class="card" style="text-align:center;width:min(720px,100%);aspect-ratio:16/9;display:grid;place-items:center">
+<div><div class="hero" style="font-size:90px">🎬</div><b>Serial Belajar Tentang Sekelilingku</b><br><small>Klik tombol di bawah untuk menonton di YouTube</small></div></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><button class="btn" onclick="ext(VIDEO_URL)">▶ Putar Video</button><button class="btn" onclick="ext(MATERI_URL)">📺 Video Materi</button></div></div></section>
+
+<section class="slide" id="games"><h2>GAMES: Siapkan Perlengkapan!</h2><div class="center" style="justify-content:flex-start">
+<div class="card" id="gq" style="text-align:center"></div><div class="prog"><i id="gp" style="width:0"></i></div><div class="items" id="gi"></div>
+</div></section>
+
+<section class="slide" id="quiz"><h2>QUIZ</h2><div class="card" style="width:min(800px,100%)" id="qb"></div></section>
+
+<section class="slide" id="surah"><h2>QS. AN-NUR : 43</h2><div class="card" style="max-width:850px;font-weight:600;text-align:center;font-size:clamp(15px,2.2vw,24px)">☁️ Tidakkah engkau melihat bahwa Allah menjadikan awan bergerak perlahan, kemudian mengumpulkannya, lalu Dia menjadikannya bertumpuk-tumpuk, lalu engkau lihat hujan keluar dari celah-celahnya, dan Dia juga menurunkan butiran-butiran es dari langit, yaitu dari gumpalan-gumpalan awan seperti gunung-gunung. Maka ditimpakan-Nya butiran-butiran es itu kepada siapa yang Dia kehendaki dan dihindarkan-Nya dari siapa yang Dia kehendaki. Kilauan kilatnya hampir-hampir menghilangkan penglihatan. (QS. An-Nur : 43)</div></section>
+
+<section class="slide" id="kesimpulan"><h2>KESIMPULAN</h2><div class="card" style="width:min(850px,100%)"><b>Rangkuman Materi Cuaca</b><div id="ks"></div></div>
+<button class="btn" onclick="go('profil')" style="margin-top:14px">Selesai ✔</button></section>
+
+<section class="slide" id="profil"><h2>PROFIL</h2><div class="grid"><div class="card" style="text-align:center"><div class="avatar">👩‍🏫</div><b>ALIYAH M. NUR</b><br>BC24.3<br>240407510024</div><div class="card" style="text-align:center"><div class="avatar">🧕</div><b>FATHANAH RADHIYAH R</b><br>BC24.3<br>240407511048</div></div><h2 style="margin-top:3vh">TERIMA KASIH 🌈</h2></section>
+
+<div id="nav"><button onclick="step(-1)" title="Kembali">◀</button><button onclick="go('cover')" title="Awal">🏠</button><button onclick="go('menu')" title="Menu">☰</button><button onclick="step(1)" title="Lanjut">▶</button><button id="snd" onclick="toggleSnd()" title="Suara">🔊</button></div>
+
+<script>
+var VIDEO_URL='https://youtu.be/5gckoJP9HZ4?si=ZbbfIy0gwM7l_i6G',MATERI_URL='https://youtu.be/43CLTdOR1Kw?si=I8SqUizDDBWFo3Wk',GAME_URL='';
+var $=function(i){return document.getElementById(i)};
+var ORDER=['cover','menu','tujuan','materi','pengertian','cerah','berawan','mendung','hujan','berangin','video','games','quiz','surah','kesimpulan','profil'];
+var TJ=['Menjelaskan pengertian cuaca sebagai keadaan atau gejala alam yang terjadi dan berubah dalam waktu singkat.','Menyebutkan macam-macam cuaca: cerah, berawan, mendung, hujan, dan berangin.','Mengidentifikasi ciri-ciri setiap jenis cuaca.','Menjelaskan faktor yang memengaruhi perubahan cuaca: suhu, sinar matahari, awan, angin, curah hujan, dan kelembapan udara.','Menjelaskan pengaruh cuaca terhadap kehidupan manusia, termasuk pakaian, makanan atau minuman, dan aktivitas.','Memilih kegiatan dan perlengkapan yang sesuai dengan kondisi cuaca.'];
+$('tj').innerHTML=TJ.map(function(t,i){return '<li style="margin:10px 0;animation:pop .5s '+i*.12+'s backwards"><span class="tag" style="background:#ffb703">'+(i+1)+'</span> Peserta didik dapat '+t.charAt(0).toLowerCase()+t.slice(1)+'</li>'}).join('');
+var MENU=[['🎯','Tujuan','tujuan'],['📚','Materi','materi'],['🎬','Video','video'],['❓','Quiz','quiz'],['🎮','Games','games'],['📝','Kesimpulan','kesimpulan'],['🕌','QS An-Nur:43','surah']];
+$('menugrid').innerHTML=MENU.map(function(m,i){return '<button class="btn" style="animation:pop .5s '+i*.08+'s backwards" onclick="go(\''+m[2]+'\')">'+m[0]+' '+m[1]+'</button>'}).join('');
+var D={cerah:{n:'Cerah',e:'☀️',s:'Matahari bersinar terang, langit bersih.',c:['Matahari bersinar terang.','Langit tampak bersih atau hanya sedikit awan.','Udara terasa hangat atau panas.'],pakaian:['Pakaian tipis dan menyerap keringat, misalnya katun.','Topi.','Kacamata hitam.'],mm:['Es buah.','Es krim.','Jus.','Air putih dingin.'],akt:['Menjemur pakaian.','Bermain di taman.','Bermain layang-layang.'],p:'Cuaca cerah membuat kegiatan di luar ruangan lebih mudah dilakukan, tetapi udara yang panas membuat kita perlu melindungi tubuh dan mencukupi kebutuhan cairan.',pi:['👕','🧢','🕶️','🍦']},
+berawan:{n:'Berawan',e:'⛅',s:'Langit tertutup awan, matahari terlihat sedikit atau tidak langsung.',c:['Sinar matahari tertutup oleh kumpulan awan putih.','Udara terasa sejuk.'],pakaian:['Pakaian nyaman dan menyerap keringat.','Bawa jaket atau sweater tipis untuk udara sejuk.'],mm:['Makanan hangat dan bergizi: sup, bubur, roti.','Minuman hangat: teh, susu hangat, cokelat hangat.'],akt:['Belajar dan membaca buku.','Berolahraga ringan.','Bermain di dalam atau luar ruangan.'],p:'Udara sejuk membuat aktivitas lebih nyaman. Matahari tidak terik, baik untuk kesehatan kulit. Jika awan menebal, dapat terjadi hujan.',pi:['🧥','🍲','📖','⚽']},
+mendung:{n:'Mendung',e:'☁️',s:'Langit dipenuhi awan gelap dan tebal.',c:['Langit dipenuhi awan gelap atau tebal.','Sinar matahari tertutup sehingga suasana tampak redup.','Udara biasanya terasa lebih sejuk.'],pakaian:['Pakaian yang nyaman.','Jaket tipis jika udara terasa sejuk.','Membawa payung atau jas hujan sebagai persiapan.'],mm:['Air putih.','Minuman hangat.','Bekal atau makanan ringan secukupnya.'],akt:['Membaca atau belajar di dalam ruangan.','Bermain di luar jika belum hujan sambil memperhatikan langit.','Menyiapkan payung dan perlengkapan hujan.'],p:'Kegiatan di luar ruangan perlu dilakukan dengan hati-hati karena cuaca mendung dapat segera berubah menjadi hujan.',pi:['🧥','☂️','🍵','📚']},
+hujan:{n:'Hujan',e:'🌧️',s:'Awan tebal gelap, air turun dari langit.',c:['Awan terlihat tebal dan gelap.','Air turun dari langit.','Jalan atau tanah menjadi basah.','Terdapat genangan air setelah hujan.'],pakaian:['Jas hujan atau payung.','Sepatu atau sandal yang sesuai untuk kondisi basah.','Pakaian nyaman dan mudah dikeringkan.'],mm:['Air putih.','Minuman hangat.','Sup atau makanan hangat.'],akt:['Membaca atau belajar di dalam ruangan.','Bermain di dalam rumah.','Mengamati hujan dari tempat yang aman.','Menunda aktivitas luar ruangan sampai hujan reda.'],p:'Hujan membantu menyediakan air bagi manusia, tumbuhan, dan hewan. Namun hujan dapat membuat jalan licin, menyebabkan genangan, dan menghambat kegiatan di luar ruangan.',pi:['☂️','👢','🍜','🏠']},
+berangin:{n:'Berangin',e:'🌬️',s:'Udara bergerak cukup kencang, pepohonan bergoyang.',c:['Udara bergerak cukup kencang.','Daun atau debu dapat beterbangan.','Pepohonan bergerak tertiup angin.','Layang-layang dapat terbang.'],pakaian:['Pakaian nyaman.','Jaket tipis jika udara terasa sejuk.','Topi atau pakaian yang tidak mudah tertiup angin.'],mm:['Air putih.','Jus buah.','Makanan ringan atau bekal secukupnya.'],akt:['Bermain layang-layang di tempat yang aman.','Berjalan-jalan atau berolahraga ringan.','Mengamati gerakan daun dan pepohonan.','Menghindari tempat terbuka jika angin terlalu kencang.'],p:'Angin dapat membuat udara terasa sejuk, tetapi angin yang terlalu kencang dapat menerbangkan benda ringan dan mengganggu kegiatan di luar ruangan.',pi:['🪁','🧥','🍹','🍃']}};
+var FAK=['Suhu','Sinar matahari','Awan','Angin','Curah hujan','Kelembapan udara'];
+var FEI={Suhu:'🌡️','Sinar matahari':'☀️',Awan:'☁️',Angin:'💨','Curah hujan':'🌧️','Kelembapan udara':'💧'};
+var TABS=[['🔎 Ciri-ciri','#e5533d'],['⏱️ Perubahan','#f08a24'],['⚙️ Faktor','#2fa84f'],['🌍 Pengaruh','#2b7fd4'],['👕 Pakaian','#8e5bd0'],['🥤 Makanan/Minuman','#d6428a'],['🏃 Aktivitas','#1ba39c']];
+var cur='cerah',tab=0;
+function L(a){return '<ul>'+a.map(function(x,i){return '<li style="animation-delay:'+i*.12+'s">'+x+'</li>'}).join('')+'</ul>'}
+function showTab(i){tab=i;var d=D[cur],h='',ic=d.e;
+ [].forEach.call($('tabs').children,function(b,j){b.classList.toggle('on',j==i)});
+ if(i==0)h='<b>Ciri-ciri Cuaca '+d.n+'</b>'+L(d.c);
+ if(i==1){h='<b>Mengapa cuaca dapat berubah dalam waktu dekat?</b><p>Cuaca dapat berubah karena kondisi udara, awan, angin, suhu, dan kelembapan terus berubah. Cuaca '+d.n.toLowerCase()+' bisa berubah menjadi cuaca lain dalam hitungan menit hingga jam.</p>';ic='⏱️'}
+ if(i==2){h='<b>Faktor yang memengaruhi perubahan cuaca</b><p style="margin:4px">Klik ikon untuk bermain:</p>'+FAK.map(function(f){return '<span class="tag" style="cursor:pointer" onclick="$(\'wi\').textContent=\''+FEI[f]+'\';pp(\''+FEI[f]+'\',event)">'+FEI[f]+' '+f+'</span>'}).join('');ic='🌡️'}
+ if(i==3){h='<b>Pengaruh terhadap kehidupan manusia</b><p>'+d.p+'</p>';ic='🧑‍🤝‍🧑'}
+ if(i==4){h='<b>Pakaian yang digunakan</b>'+L(d.pakaian);ic=d.pi[0]}
+ if(i==5){h='<b>Makanan atau minuman</b>'+L(d.mm);ic=d.pi[3==3?1:0]==='🧢'?'🍦':d.pi[2]}
+ if(i==6){h='<b>Jenis aktivitas</b>'+L(d.akt);ic=d.pi[3]}
+ $('wc').innerHTML=h;$('wc').style.animation='none';void $('wc').offsetWidth;$('wc').style.animation='';$('wi').textContent=ic}
+function pp(t,e){var s=document.createElement('div');s.className='pop';s.textContent=t;s.style.left=e.clientX+'px';s.style.top=e.clientY+'px';document.body.appendChild(s);setTimeout(function(){s.remove()},1000)}
+function setW(k){cur=k;tab=0;$('wt').textContent='CUACA '+D[k].n.toUpperCase();$('wsub').textContent=D[k].s;
+ $('tabs').innerHTML=TABS.map(function(t,i){return '<button class="tab" style="background:'+t[1]+'" onclick="showTab('+i+')">'+t[0]+'</button>'}).join('');showTab(0)}
+$('matgrid').innerHTML='<button class="btn" onclick="go(\'pengertian\')">📖 Pengertian Cuaca</button><button class="btn" onclick="ext(MATERI_URL)">📺 Video Materi (YouTube)</button>'+Object.keys(D).map(function(k,i){return '<button class="btn" style="animation:pop .5s '+i*.08+'s backwards" onclick="go(\''+k+'\')">'+D[k].e+' Cuaca '+D[k].n+'</button>'}).join('');
+// ---- animated scenes ----
+var fx=$('fx'),tm=[];
+function E(txt,css,anim,extra){var d=document.createElement('div');d.className='fl';d.textContent=txt;d.style.cssText=css+';animation:'+anim;fx.appendChild(d);return d}
+var st=document.createElement('style');st.textContent='@keyframes drift{from{transform:translateX(-25vw)}to{transform:translateX(120vw)}}@keyframes fall{from{transform:translateY(-10vh)}to{transform:translateY(105vh)}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes sway{0%,100%{transform:rotate(-14deg) translateY(0)}50%{transform:rotate(14deg) translateY(-25px)}}@keyframes gust{from{transform:translateX(110vw) rotate(0)}to{transform:translateX(-30vw) rotate(720deg)}}@keyframes streak{from{transform:translateX(110vw)}to{transform:translateX(-40vw)}}@keyframes flash{0%,92%,100%{opacity:0}94%{opacity:.6}96%{opacity:.1}98%{opacity:.5}}@keyframes pulse{50%{transform:scale(1.15)}}';document.head.appendChild(st);
+function R(a,b){return a+Math.random()*(b-a)}
+function scene(k){fx.innerHTML='';var i;
+ if(k=='cerah'){E('☀️','top:3vh;right:6vw;font-size:clamp(90px,16vw,200px)','spin 14s linear infinite');E('🪁','top:30vh;left:12vw;font-size:70px','sway 3s ease-in-out infinite');for(i=0;i<3;i++)E('☁️','top:'+R(5,35)+'vh;font-size:70px;opacity:.7','drift '+R(40,70)+'s linear '+(-i*20)+'s infinite');E('🦋','bottom:16vh;left:20vw;font-size:40px','sway 2s infinite')}
+ if(k=='berawan'){E('🌤️','top:4vh;right:5vw;font-size:110px','pulse 5s infinite');for(i=0;i<7;i++)E('☁️','top:'+R(2,45)+'vh;font-size:'+R(80,170)+'px','drift '+R(25,50)+'s linear '+(-i*8)+'s infinite')}
+ if(k=='mendung'){for(i=0;i<8;i++)E('☁️','top:'+R(0,40)+'vh;font-size:'+R(110,210)+'px;filter:brightness(.45) saturate(0)','drift '+R(30,55)+'s linear '+(-i*7)+'s infinite');E('','inset:0;background:#fff','flash 7s infinite')}
+ if(k=='hujan'){for(i=0;i<5;i++)E('☁️','top:'+(-2+i*2)+'vh;left:'+(i*22-5)+'vw;font-size:190px;filter:brightness(.4) saturate(0)','pulse 6s '+i+'s infinite');for(i=0;i<70;i++)E('💧','top:0;left:'+R(0,100)+'vw;font-size:'+R(16,28)+'px;opacity:.8','fall '+R(.9,1.8)+'s linear '+R(-2,0)+'s infinite');E('','inset:0;background:#fff','flash 5s infinite')}
+ if(k=='berangin'){for(i=0;i<9;i++)E('','top:'+R(5,70)+'vh;width:'+R(80,220)+'px;height:4px;border-radius:4px;background:#fff9','streak '+R(1.2,2.8)+'s linear '+R(-3,0)+'s infinite');for(i=0;i<8;i++)E('🍃','top:'+R(10,75)+'vh;font-size:36px','gust '+R(3,6)+'s linear '+R(-6,0)+'s infinite');E('🪁','top:14vh;left:8vw;font-size:90px','sway 2s ease-in-out infinite');E('🌳','bottom:10vh;right:6vw;font-size:120px','sway 2.4s ease-in-out infinite')}
+ if(k=='pengertian'){}}
+var pc=0,PE=['☀️','⛅','☁️','🌧️','🌬️'];function cycle(){pc=(pc+1)%5;$('pico').textContent=PE[pc];scene(['cerah','berawan','mendung','hujan','berangin'][pc]);document.body.dataset.w=['cerah','berawan','mendung','hujan','berangin'][pc]}
+// ---- ice breaking ----
+var it=null,MV=['👏 Tepuk tangan','🦵 Tepuk paha','🙌 Angkat tangan','👈 Tunjuk kiri','👉 Tunjuk kanan','🤫 Diam dan fokus'],mi=0;
+function ice(){var b=$('icebtn');if(it){clearInterval(it);it=null;b.textContent='▶ Mulai';$('icebox').classList.add('pause');return}$('icebox').classList.remove('pause');b.textContent='⏸ Berhenti';it=setInterval(function(){$('move').textContent=MV[mi++%MV.length]},1500)}
+// ---- games ----
+var G=[['cerah','Cuaca Cerah ☀️'],['berawan','Cuaca Berawan ⛅'],['mendung','Cuaca Mendung ☁️'],['hujan','Cuaca Hujan 🌧️'],['berangin','Cuaca Berangin 🌬️']];
+var IT=[['🧢','Topi',['cerah']],['🕶️','Kacamata',['cerah']],['🍦','Es krim',['cerah']],['🧥','Jaket',['berawan','mendung','berangin']],['☂️','Payung',['mendung','hujan']],['🍲','Sup hangat',['berawan','hujan']],['🪁','Layang-layang',['cerah','berangin']],['👢','Sepatu hujan',['hujan']],['📖','Buku',['berawan','mendung','hujan']],['🏊','Renang',[]]];
+var gi=0,gok=0,gneed=0;
+function gStart(){gi=0;gRound()}
+function gRound(){if(gi>=G.length){$('gq').innerHTML='🏆 <b>Hebat!</b> Semua perlengkapan sudah tepat.';$('gi').innerHTML='<button class="btn" onclick="gStart()">🔁 Main lagi</button>';$('gp').style.width='100%';return}
+ var w=G[gi][0];document.body.dataset.w=w;scene(w);gok=0;gneed=IT.filter(function(x){return x[2].indexOf(w)>-1}).length;
+ $('gq').innerHTML='Ayo pilih <b>'+gneed+' perlengkapan/kegiatan</b> yang cocok untuk <b>'+G[gi][1]+'</b>';$('gp').style.width=gi/G.length*100+'%';
+ $('gi').innerHTML=IT.map(function(x,i){return '<div class="item" onclick="gPick('+i+',this,event)">'+x[0]+'<small>'+x[1]+'</small></div>'}).join('')}
+function gPick(i,el,e){if(IT[i][2].indexOf(G[gi][0])>-1){el.classList.add('ok');pp('⭐',e);if(++gok==gneed){gi++;setTimeout(gRound,900)}}else{el.classList.remove('no');void el.offsetWidth;el.classList.add('no')}}
+// ---- quiz ----
+var Q=[['Apa yang dimaksud dengan cuaca?',['Keadaan alam yang berubah dalam waktu singkat','Keadaan alam yang tetap selama bertahun-tahun','Nama musim di Indonesia'],0],['Langit dipenuhi awan gelap dan tebal. Cuaca ini disebut...',['Cerah','Mendung','Berangin'],1],['Perlengkapan yang tepat saat cuaca hujan adalah...',['Kacamata hitam','Topi pantai','Jas hujan atau payung'],2],['Manakah yang BUKAN faktor perubahan cuaca?',['Suhu','Warna baju','Kelembapan udara'],1],['Kegiatan yang cocok saat cuaca berangin di tempat aman adalah...',['Bermain layang-layang','Menjemur pakaian basah di hujan','Berenang di genangan'],0]];
+var qi=0,qs=0;
+function qShow(){if(qi>=Q.length){$('qb').innerHTML='<div style="text-align:center"><div class="hero" style="font-size:90px">'+(qs>=4?'🏆':'👍')+'</div><h2>Skor: '+qs+' / '+Q.length+'</h2><button class="btn" onclick="qi=0;qs=0;qShow()">🔁 Ulangi</button></div>';return}
+ var q=Q[qi];$('qb').innerHTML='<div class="prog"><i style="width:'+qi/Q.length*100+'%"></i></div><b>'+(qi+1)+'. '+q[0]+'</b>'+q[1].map(function(o,i){return '<button class="opt" onclick="qAns('+i+',this,event)">'+o+'</button>'}).join('')}
+function qAns(i,el,e){var bs=el.parentNode.querySelectorAll('.opt');if(el.parentNode.dataset.d)return;el.parentNode.dataset.d=1;
+ if(i==Q[qi][2]){el.classList.add('ok');qs++;pp('🎉',e)}else{el.classList.add('no');bs[Q[qi][2]].classList.add('ok')}setTimeout(function(){qi++;qShow()},1300)}
+$('ks').innerHTML='<p>Cuaca dapat berupa <b>cerah, berawan, mendung, hujan,</b> atau <b>berangin</b>. Cuaca dapat berubah karena suhu, sinar matahari, awan, angin, curah hujan, dan kelembapan udara. Perubahan cuaca memengaruhi kegiatan, pakaian, makanan, serta minuman yang kita pilih. Karena itu, kita perlu mengamati cuaca dan mempersiapkan diri dengan tepat.</p><div style="font-size:50px;text-align:center">☀️ ⛅ ☁️ 🌧️ 🌬️</div>';
+// ---- AUDIO ENGINE ----
+var AC=null,master=null,muted=false,unlocked=false,amb=[],ambT=[],lastK='',songT=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=muted?0:.6;master.connect(AC.destination)}catch(e){}}if(AC&&AC.state=='suspended')AC.resume();return AC}
+function tone(f,d,type,vol,t0){if(!unlocked)return;var a=ac();if(!a)return;t0=t0||a.currentTime;var o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol||.2,t0+.01);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g);g.connect(master);o.start(t0);o.stop(t0+d+.05)}
+function sfx(n){if(!unlocked)return;var a=ac();if(!a)return;var t=a.currentTime;
+ if(n=='click')tone(700,.07,'square',.07);
+ if(n=='page'){tone(420,.15,'sine',.15);tone(630,.18,'sine',.12,t+.06)}
+ if(n=='enter')[523,659,784,1047,1319].forEach(function(f,i){tone(f,.4,'triangle',.22,t+i*.1)});
+ if(n=='ok')[659,784,1047].forEach(function(f,i){tone(f,.25,'triangle',.22,t+i*.08)});
+ if(n=='no'){tone(200,.35,'sawtooth',.1);tone(150,.4,'sawtooth',.1,t+.12)}
+ if(n=='win')[523,659,784,659,784,1047,1319].forEach(function(f,i){tone(f,.35,'triangle',.22,t+i*.13)})}
+function noise(type,freq,q,vol){var a=ac(),b=a.createBuffer(1,a.sampleRate*2,a.sampleRate),d=b.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;var s=a.createBufferSource();s.buffer=b;s.loop=true;var f=a.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q||1;var g=a.createGain();g.gain.value=vol;s.connect(f);f.connect(g);g.connect(master);s.start();return {s:s,g:g}}
+function pad(freqs,vol){var a=ac();freqs.forEach(function(f){var o=a.createOscillator(),g=a.createGain();o.frequency.value=f;g.gain.value=vol;o.connect(g);g.connect(master);o.start();amb.push({s:o})})}
+function thunder(){var a=ac(),n=noise('lowpass',160,1,.8);n.g.gain.setValueAtTime(.8,a.currentTime);n.g.gain.exponentialRampToValueAtTime(.001,a.currentTime+2.2);setTimeout(function(){try{n.s.stop()}catch(e){}},2300)}
+function chirp(){if(!unlocked)return;var a=ac(),t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.frequency.setValueAtTime(2200+Math.random()*600,t);o.frequency.exponentialRampToValueAtTime(3600,t+.08);o.frequency.exponentialRampToValueAtTime(2500,t+.18);g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(master);o.start(t);o.stop(t+.25)}
+function stopAmb(){amb.forEach(function(n){try{n.s.stop()}catch(e){}});amb=[];ambT.forEach(clearInterval);ambT=[]}
+function ambient(k){lastK=k;stopAmb();if(!unlocked||!k)return;var a=ac();if(!a)return;
+ if(k=='hujan'){amb.push(noise('highpass',900,.5,.2));ambT.push(setInterval(thunder,7000))}
+ if(k=='mendung'){amb.push(noise('lowpass',250,.5,.3));pad([110,165],.03);ambT.push(setInterval(thunder,9000))}
+ if(k=='berangin'){var n=noise('bandpass',600,.7,.12),o=a.createOscillator(),g=a.createGain();o.frequency.value=.25;g.gain.value=.12;o.connect(g);g.connect(n.g.gain);o.start();amb.push(n);amb.push({s:o})}
+ if(k=='berawan'){amb.push(noise('bandpass',400,.5,.04));pad([220,262,330],.03)}
+ if(k=='cerah'){pad([262,330,392],.025);ambT.push(setInterval(function(){chirp();setTimeout(chirp,220)},1900))}}
+function toggleSnd(){ac();muted=!muted;if(master)master.gain.value=muted?0:.6;$('snd').textContent=muted?'🔇':'🔊'}
+document.addEventListener('pointerdown',function(){if(!unlocked){unlocked=true;ac();ambient(lastK)}});
+document.addEventListener('click',function(e){if(e.target.closest('#cover .btn'))sfx('enter');else if(e.target.closest('button,.tab,.item,.opt'))sfx('click')});
+var _scene=scene;scene=function(k){_scene(k);ambient(k)};
+// ---- ICE BREAKING: lagu Aram Sam Sam (sintesis) ----
+var SG=[[330,.5],[392,.5],[392,1],[330,.5],[392,.5],[392,1],[440,.25],[440,.25],[440,.25],[440,.25],[392,.25],[392,.25],[392,.5],[330,.5],[392,.5],[392,1]];
+function stopSong(){clearTimeout(songT);songT=null}
+function playSong(){stopSong();var i=0;(function n(){var s=SG[i%SG.length];tone(s[0],s[1]*.28,'triangle',.3);if(i%2==0)tone(110,.1,'sine',.25);i++;songT=setTimeout(n,s[1]*300)})()}
+function ice(){var b=$('icebtn');if(it){clearInterval(it);it=null;stopSong();b.textContent='▶ Mulai';$('icebox').classList.add('pause');return}$('icebox').classList.remove('pause');b.textContent='⏸ Berhenti';it=setInterval(function(){$('move').textContent=MV[mi++%MV.length]},1500);playSong()}
+function gPick(i,el,e){if(IT[i][2].indexOf(G[gi][0])>-1){el.classList.add('ok');pp('⭐',e);sfx('ok');if(++gok==gneed){gi++;setTimeout(gRound,900)}}else{sfx('no');el.classList.remove('no');void el.offsetWidth;el.classList.add('no')}}
+// ---- QUIZ 3D + SKOR ----
+var s3=document.createElement('style');s3.textContent='.s3{perspective:700px;height:170px;display:grid;place-items:center}.o3{position:relative;width:140px;height:140px;transform-style:preserve-3d;animation:spin3 5s linear infinite}.o3 b{position:absolute;inset:0;display:grid;place-items:center;font-size:120px;line-height:1;font-weight:400}@keyframes spin3{from{transform:rotateX(-14deg) rotateY(0)}to{transform:rotateX(-14deg) rotateY(360deg)}}.sh3{width:120px;height:18px;border-radius:50%;background:#0003;filter:blur(6px);margin:-6px auto 6px;animation:pulse 5s linear infinite}.sb{display:flex;justify-content:space-between;font-weight:700;font-size:clamp(14px,2vw,20px)}';document.head.appendChild(s3);
+var QZ=[{e:'☀️',q:'Gambar 3D ini menunjukkan cuaca apa?',o:['Cerah','Hujan','Berangin'],a:0},{e:'⛅',q:'Tebak! Ini gambar cuaca...',o:['Mendung','Berawan','Hujan'],a:1},{e:'☁️',f:'brightness(.45) saturate(0)',q:'Awan gelap dan tebal. Cuaca apa ini?',o:['Cerah','Berawan','Mendung'],a:2},{e:'🌧️',q:'Air turun dari awan. Ini cuaca...',o:['Hujan','Cerah','Berangin'],a:0},{e:'🌬️',q:'Daun beterbangan tertiup... Cuaca apa?',o:['Mendung','Berangin','Cerah'],a:1},{e:'☂️',q:'Benda ini dipakai saat cuaca...',o:['Cerah terik','Hujan','Berangin kencang'],a:1},{e:'🪁',q:'Benda ini cocok dimainkan saat cuaca...',o:['Berangin','Hujan','Mendung gelap'],a:0},{e:'🕶️',q:'Kacamata hitam dipakai saat cuaca...',o:['Hujan','Mendung','Cerah'],a:2},{e:'🌍',q:'Apa yang dimaksud dengan cuaca?',o:['Keadaan alam yang berubah dalam waktu singkat','Keadaan alam yang tetap bertahun-tahun','Nama musim di Indonesia'],a:0},{e:'🌡️',q:'Manakah yang BUKAN faktor perubahan cuaca?',o:['Suhu','Warna baju','Kelembapan udara'],a:1}];
+var qc=0,sk=0,tl=20,qt=null,lock=0;
+function sh(a){return a.map(function(x,i){return [Math.random(),i]}).sort(function(x,y){return x[0]-y[0]}).map(function(x){return x[1]})}
+function qShow(){clearInterval(qt);if(qi==0){qc=0;sk=0}
+ if(qi>=QZ.length){var st=qc>=9?'🏆':qc>=7?'🥇':qc>=5?'🥈':'🌱';sfx('win');$('qb').innerHTML='<div style="text-align:center"><div class="hero" style="font-size:90px">'+st+'</div><h2>Skor Akhir: '+qs+'</h2><p>Benar <b>'+qc+'</b> dari '+QZ.length+' soal</p><button class="btn" onclick="qi=0;qs=0;qShow()">🔁 Main Lagi</button></div>';return}
+ var q=QZ[qi],i,L='';lock=0;tl=20;for(i=0;i<9;i++)L+='<b style="transform:translateZ('+((i-4)*5)+'px);filter:'+(q.f||'')+(i==8?'':' brightness(.7)')+'">'+q.e+'</b>';
+ $('qb').innerHTML='<div class="sb"><span>⭐ Skor: <span id="sc">'+qs+'</span></span><span>🔥 Beruntun: '+sk+'</span><span>⏱ <span id="tm">20</span></span></div><div class="prog"><i style="width:'+qi/QZ.length*100+'%"></i></div><div class="s3"><div class="o3">'+L+'</div></div><div class="sh3"></div><b>'+(qi+1)+'. '+q.q+'</b>'+sh(q.o).map(function(j){return '<button class="opt" onclick="qPick('+j+',this,event)">'+q.o[j]+'</button>'}).join('');
+ qt=setInterval(function(){tl--;if($('tm'))$('tm').textContent=tl;if(tl<=0){clearInterval(qt);qPick(-1,null,null)}},1000)}
+function qPick(j,el,e){if(lock)return;lock=1;clearInterval(qt);var q=QZ[qi],bs=document.querySelectorAll('#qb .opt');
+ if(j==q.a){sk++;var g=10+Math.ceil(tl/2)+(sk>=3?5:0);qs+=g;qc++;el.classList.add('ok');sfx('ok');pp('+'+g,e)}else{sk=0;sfx('no');if(el)el.classList.add('no');[].forEach.call(bs,function(b){if(b.textContent==q.o[q.a])b.classList.add('ok')})}
+ $('sc').textContent=qs;setTimeout(function(){qi++;qShow()},1500)}
+// ---- navigation ----
+var curId='cover';
+function ext(u){if(u)window.open(u,'_blank');else alert('Link belum diisi. Edit VIDEO_URL / GAME_URL di kode.')}
+function go(id){curId=id;clearInterval(it);it=null;
+ [].forEach.call(document.querySelectorAll('.slide'),function(s){s.classList.remove('on')});
+ var isW=!!D[id];$(isW?'w':id).classList.add('on');
+ document.body.dataset.w=isW?id:(id=='pengertian'?'cerah':(id=='surah'?'mendung':''));
+ if(isW){setW(id);scene(id)}else if(id=='pengertian'){pc=0;$('pico').textContent='☀️';scene('cerah')}else if(id=='surah'){scene('hujan')}else if(id=='games'){gStart()}else if(id=='quiz'){qi=0;qs=0;qShow();scene('')}else if(id=='cover'){scene('cerah')}else scene('');
+ try{history.replaceState(null,'','#'+id)}catch(e){}}
+function step(d){var i=ORDER.indexOf(curId)+d;if(i>=0&&i<ORDER.length)go(ORDER[i])}
+document.addEventListener('keydown',function(e){if(e.key=='ArrowRight')step(1);if(e.key=='ArrowLeft')step(-1)});
+var _go=go;go=function(id){stopSong();clearInterval(qt);sfx('page');_go(id)};
+go('cover');
+</script></body></html>
